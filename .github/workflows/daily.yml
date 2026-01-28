@@ -1,0 +1,23 @@
+name: Update Daily Image
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight
+  workflow_dispatch: # Allows you to run it manually
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Pick New Image
+        run: |
+          # Logic to pick a random image from the folder and overwrite today.jpg
+          NEW_IMAGE=$(ls images/ | shuf -n 1)
+          cp images/$NEW_IMAGE today.jpg
+      - name: Commit and Push
+        run: |
+          git config --global user.name "Daily Bot"
+          git config --global user.email "bot@github.com"
+          git add today.jpg
+          git commit -m "Update daily image"
+          git push
